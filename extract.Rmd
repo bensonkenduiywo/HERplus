@@ -10,3 +10,45 @@ opts_chunk$set(tidy.opts=list(width.cutoff=60))
 opts_knit$set(global.par = TRUE)
 ```
 
+## Donwload Soil salinity data
+
+Download salinity data available from [Hassani et al. (2020)](https://doi.org/10.6084/m9.figshare.13295918.v1).
+
+```{r d1}
+root <- "D:/Data/HERplus/"
+options(timeout=36000)
+getSalinity <- function(url, path){
+  temp <- tempfile()
+  download.file(url,temp ,mode = "wb")
+  unzip (temp, exdir = path)
+}
+if(!file.exists(paste0(root, "Salinity/"))){
+  getSalinity("https://figshare.com/ndownloader/files/25617323", root)
+  getSalinity("https://figshare.com/ndownloader/files/25616990", root)
+  getSalinity("https://figshare.com/ndownloader/files/25617050", root)
+  getSalinity("https://figshare.com/ndownloader/files/25617098", root)
+}
+
+
+```
+
+Get Bangladesh level 4 administrative boundaries.
+
+```{r d2, warning=FALSE, message=FALSE}
+library(raster)
+shp <- getData("GADM",country="Bangladesh",level=4)
+plot(shp)
+```
+
+
+## Spatial Metrics
+
+Extract spatial salinity metrics by aggregating salinity in a given year in each admin 4 boundary.
+
+
+
+
+## References
+
+Hassani, Amirhossein; Azapagic, Adisa; Shokri, Nima (2020): Predicting Long-term Dynamics of Soil Salinity and Sodicity on a Global Scale. [*figshare*. Dataset](https://doi.org/10.6084/m9.figshare.13295918.v1).  
+

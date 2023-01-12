@@ -307,7 +307,43 @@ $(document).ready(function () {
 </div>
 
 
-
+<div id="donwload-soil-salinity-data" class="section level2">
+<h2>Donwload Soil salinity data</h2>
+<p>Download salinity data available from <a
+href="https://doi.org/10.6084/m9.figshare.13295918.v1">Hassani et
+al. (2020)</a>.</p>
+<pre class="r"><code>root &lt;- &quot;D:/Data/HERplus/&quot;
+options(timeout=36000)
+getSalinity &lt;- function(url, path){
+  temp &lt;- tempfile()
+  download.file(url,temp ,mode = &quot;wb&quot;)
+  unzip (temp, exdir = path)
+}
+if(!file.exists(paste0(root, &quot;Salinity/&quot;))){
+  getSalinity(&quot;https://figshare.com/ndownloader/files/25617323&quot;, root)
+  getSalinity(&quot;https://figshare.com/ndownloader/files/25616990&quot;, root)
+  getSalinity(&quot;https://figshare.com/ndownloader/files/25617050&quot;, root)
+  getSalinity(&quot;https://figshare.com/ndownloader/files/25617098&quot;, root)
+}</code></pre>
+<p>Get Bangladesh level 4 administrative boundaries.</p>
+<pre class="r"><code>library(raster)
+shp &lt;- getData(&quot;GADM&quot;,country=&quot;Bangladesh&quot;,level=4)
+plot(shp)</code></pre>
+<p><img src="extract_files/figure-html/d2-1.png" width="672" /></p>
+</div>
+<div id="spatial-metrics" class="section level2">
+<h2>Spatial Metrics</h2>
+<p>Extract spatial salinity metrics by aggregating salinity in a given
+year in each admin 4 boundary.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>Hassani, Amirhossein; Azapagic, Adisa; Shokri, Nima (2020):
+Predicting Long-term Dynamics of Soil Salinity and Sodicity on a Global
+Scale. <a
+href="https://doi.org/10.6084/m9.figshare.13295918.v1"><em>figshare</em>.
+Dataset</a>.</p>
+</div>
 
 
 

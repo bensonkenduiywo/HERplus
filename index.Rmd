@@ -19,4 +19,4 @@ This tutorial gives a guide in how to extract information from raster (remote se
 
 ### References
 
-Caers, J. (2005). [*Petroleum geostatistics*](https://store.spe.org/Petroleum-Geostatistics-P45.aspx). Society of Petroleum Engineers Richardson
+Hassani, A., Azapagic, A., & Shokri, N. (2020). [Predicting long-term dynamics of soil salinity and sodicity on a global scale](https://doi.org/10.1073/pnas.2013771117). *Proceedings of the National Academy of Sciences, 117*(52), 33017-33027.
