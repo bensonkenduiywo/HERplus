@@ -1,11 +1,12 @@
 ---
-title: "Extract raster data"
 author: "Benson Kenduiywo"
 date: "2023-01-12"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=60))
+opts_knit$set(global.par = TRUE)
 ```
 
