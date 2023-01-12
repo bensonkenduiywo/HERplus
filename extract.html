@@ -331,9 +331,9 @@ if(!file.exists(paste0(root, &quot;Salinity/&quot;))){
 <div id="administrative-boundary" class="section level3">
 <h3>Administrative boundary</h3>
 <p>Get Bangladesh level 4 administrative boundaries.</p>
-<pre class="r"><code>library(raster)
-temp &lt;- getData(&quot;GADM&quot;,country=&quot;Bangladesh&quot;,level=4)
-plot(temp)</code></pre>
+<pre class="r"><code>library(geodata)
+shp &lt;- gadm(country=&quot;BGD&quot;, level=4, path=root)
+plot(shp)</code></pre>
 <p><img src="extract_files/figure-html/d2-1.png" width="672" /></p>
 </div>
 <div id="spatial-metrics" class="section level3">
@@ -342,7 +342,6 @@ plot(temp)</code></pre>
 year in each admin 4 boundary.</p>
 <pre class="r"><code>filename &lt;- paste0(root,&quot;Salinity/Bangladesh_spatial_temporal_salinity.csv&quot;)
 library(terra)
-shp &lt;- vect(temp)
 if(!file.exists(filename)){
   files &lt;- list.files(paste0(root,&quot;Salinity/&quot;),pattern = (&quot;.tif$&quot;), recursive = TRUE, full.names = TRUE)
   knitr::kable(head(files), caption = &#39;Salinity raster files&#39;)
