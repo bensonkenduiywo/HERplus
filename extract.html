@@ -307,8 +307,10 @@ $(document).ready(function () {
 </div>
 
 
-<div id="donwload-soil-salinity-data" class="section level2">
-<h2>Donwload Soil salinity data</h2>
+<div id="soil-salinity" class="section level2">
+<h2>Soil salinity</h2>
+<div id="donwload-data" class="section level3">
+<h3>Donwload data</h3>
 <p>Download salinity data available from <a
 href="https://doi.org/10.6084/m9.figshare.13295918.v1">Hassani et
 al. (2020)</a>.</p>
@@ -317,7 +319,7 @@ options(timeout=36000)
 getSalinity &lt;- function(url, path){
   temp &lt;- tempfile()
   download.file(url,temp ,mode = &quot;wb&quot;)
-  unzip (temp, exdir = path)
+  unzip(temp, exdir = path)
 }
 if(!file.exists(paste0(root, &quot;Salinity/&quot;))){
   getSalinity(&quot;https://figshare.com/ndownloader/files/25617323&quot;, root)
@@ -325,16 +327,38 @@ if(!file.exists(paste0(root, &quot;Salinity/&quot;))){
   getSalinity(&quot;https://figshare.com/ndownloader/files/25617050&quot;, root)
   getSalinity(&quot;https://figshare.com/ndownloader/files/25617098&quot;, root)
 }</code></pre>
+</div>
+<div id="administrative-boundary" class="section level3">
+<h3>Administrative boundary</h3>
 <p>Get Bangladesh level 4 administrative boundaries.</p>
 <pre class="r"><code>library(raster)
 shp &lt;- getData(&quot;GADM&quot;,country=&quot;Bangladesh&quot;,level=4)
 plot(shp)</code></pre>
 <p><img src="extract_files/figure-html/d2-1.png" width="672" /></p>
 </div>
-<div id="spatial-metrics" class="section level2">
-<h2>Spatial Metrics</h2>
+<div id="spatial-metrics" class="section level3">
+<h3>Spatial Metrics</h3>
 <p>Extract spatial salinity metrics by aggregating salinity in a given
 year in each admin 4 boundary.</p>
+<pre class="r"><code>filename &lt;- paste0(root,&quot;Salinity/Bangladesh_spatial_temporal_salinity.csv&quot;)
+
+if(!file.exists(filename)){
+  files &lt;- list.files(paste0(root,&quot;Salinity/&quot;),pattern = (&quot;.tif$&quot;), recursive = TRUE, full.names = TRUE)
+  knitr::kable(head(files), caption = &#39;Salinity raster files&#39;)
+  library(terra)
+  shp &lt;- vect(shp)
+  df &lt;- data.frame(Name4=shp$NAME_4)
+  for(i in 1:length(files)){
+    temp &lt;- extract(rast(files[i]), shp, fun=mean, na.rm=TRUE, ID=F)
+    df &lt;- cbind(df, temp)
+  }
+  colnames(df)[-1] &lt;- gsub(&quot;ECe_&quot;,&quot;&quot;,names(df)[-1])
+  write.csv(df, filename)  
+}                      </code></pre>
+</div>
+</div>
+<div id="chirps-donwload" class="section level2">
+<h2>CHIRPS DONWLOAD</h2>
 </div>
 <div id="references" class="section level2">
 <h2>References</h2>

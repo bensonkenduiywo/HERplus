@@ -10,7 +10,9 @@ opts_chunk$set(tidy.opts=list(width.cutoff=60))
 opts_knit$set(global.par = TRUE)
 ```
 
-## Donwload Soil salinity data
+## Soil salinity 
+
+### Donwload data
 
 Download salinity data available from [Hassani et al. (2020)](https://doi.org/10.6084/m9.figshare.13295918.v1).
 
@@ -20,7 +22,7 @@ options(timeout=36000)
 getSalinity <- function(url, path){
   temp <- tempfile()
   download.file(url,temp ,mode = "wb")
-  unzip (temp, exdir = path)
+  unzip(temp, exdir = path)
 }
 if(!file.exists(paste0(root, "Salinity/"))){
   getSalinity("https://figshare.com/ndownloader/files/25617323", root)
@@ -29,8 +31,9 @@ if(!file.exists(paste0(root, "Salinity/"))){
   getSalinity("https://figshare.com/ndownloader/files/25617098", root)
 }
 
-
 ```
+
+### Administrative boundary
 
 Get Bangladesh level 4 administrative boundaries.
 
@@ -41,11 +44,32 @@ plot(shp)
 ```
 
 
-## Spatial Metrics
+### Spatial Metrics
 
 Extract spatial salinity metrics by aggregating salinity in a given year in each admin 4 boundary.
 
+```{r s1, warning=FALSE, message=FALSE}
+filename <- paste0(root,"Salinity/Bangladesh_spatial_temporal_salinity.csv")
 
+if(!file.exists(filename)){
+  files <- list.files(paste0(root,"Salinity/"),pattern = (".tif$"), recursive = TRUE, full.names = TRUE)
+  knitr::kable(head(files), caption = 'Salinity raster files')
+  library(terra)
+  shp <- vect(shp)
+  df <- data.frame(Name4=shp$NAME_4)
+  for(i in 1:length(files)){
+    temp <- extract(rast(files[i]), shp, fun=mean, na.rm=TRUE, ID=F)
+    df <- cbind(df, temp)
+  }
+  colnames(df)[-1] <- gsub("ECe_","",names(df)[-1])
+  write.csv(df, filename)  
+}                      
+
+
+```
+
+
+## CHIRPS DONWLOAD
 
 
 ## References
