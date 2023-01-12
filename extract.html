@@ -332,8 +332,8 @@ if(!file.exists(paste0(root, &quot;Salinity/&quot;))){
 <h3>Administrative boundary</h3>
 <p>Get Bangladesh level 4 administrative boundaries.</p>
 <pre class="r"><code>library(raster)
-shp &lt;- getData(&quot;GADM&quot;,country=&quot;Bangladesh&quot;,level=4)
-plot(shp)</code></pre>
+temp &lt;- getData(&quot;GADM&quot;,country=&quot;Bangladesh&quot;,level=4)
+plot(temp)</code></pre>
 <p><img src="extract_files/figure-html/d2-1.png" width="672" /></p>
 </div>
 <div id="spatial-metrics" class="section level3">
@@ -341,13 +341,12 @@ plot(shp)</code></pre>
 <p>Extract spatial salinity metrics by aggregating salinity in a given
 year in each admin 4 boundary.</p>
 <pre class="r"><code>filename &lt;- paste0(root,&quot;Salinity/Bangladesh_spatial_temporal_salinity.csv&quot;)
-
+library(terra)
+shp &lt;- vect(temp)
 if(!file.exists(filename)){
   files &lt;- list.files(paste0(root,&quot;Salinity/&quot;),pattern = (&quot;.tif$&quot;), recursive = TRUE, full.names = TRUE)
   knitr::kable(head(files), caption = &#39;Salinity raster files&#39;)
-  library(terra)
-  shp &lt;- vect(shp)
-  df &lt;- data.frame(Name4=shp$NAME_4)
+  df &lt;- data.frame(NAME_4=shp$NAME_4)
   for(i in 1:length(files)){
     temp &lt;- extract(rast(files[i]), shp, fun=mean, na.rm=TRUE, ID=F)
     df &lt;- cbind(df, temp)
@@ -357,8 +356,27 @@ if(!file.exists(filename)){
 }                      </code></pre>
 </div>
 </div>
-<div id="chirps-donwload" class="section level2">
-<h2>CHIRPS DONWLOAD</h2>
+<div id="chirps-download" class="section level2">
+<h2>CHIRPS DOWNLOAD</h2>
+<pre class="r"><code>library(chirps)
+dates &lt;- c(&quot;2013-5-16&quot;,&quot;2013-5-20&quot;)
+#lonlat &lt;- data.frame(lon = c(shp@bbox[1,1],shp@bbox[1,2]), #lat = c(shp@bbox[2,1], shp@bbox[2,2]))
+data &lt;- get_chirps(shp, dates, server = &quot;CHC&quot;, as.raster = TRUE)
+data</code></pre>
+<pre><code>## class       : SpatRaster 
+## dimensions  : 118, 93, 5  (nrow, ncol, nlyr)
+## resolution  : 0.05, 0.05  (x, y)
+## extent      : 88, 92.65, 20.75, 26.65  (xmin, xmax, ymin, ymax)
+## coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+## source(s)   : memory
+## names       : chirps~.05.16, chirps~.05.17, chirps~.05.18, chirps~.05.19, chirps~.05.20 
+## min values  :    -9999.0000,   -9999.00000,   -9999.00000,    -9999.0000,   -9999.00000 
+## max values  :      169.5837,      98.93618,      93.42157,      109.3714,      92.85061</code></pre>
+<div id="spatially-aggregated-rainfall" class="section level3">
+<h3>Spatially aggregated rainfall</h3>
+<pre class="r"><code>dff &lt;- extract(data[[&quot;chirps-v2.0.2013.05.16&quot;]], shp, fun =mean, na.rm=T, bind=T)
+ write.csv(dff, paste0(root,&quot;Chirps/Bangladesh_chirps_rainfall.csv&quot;))</code></pre>
+</div>
 </div>
 <div id="references" class="section level2">
 <h2>References</h2>

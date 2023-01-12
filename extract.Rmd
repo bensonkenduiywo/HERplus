@@ -38,8 +38,8 @@ if(!file.exists(paste0(root, "Salinity/"))){
 Get Bangladesh level 4 administrative boundaries.
 
 ```{r d2, warning=FALSE, message=FALSE}
-library(raster)
-shp <- getData("GADM",country="Bangladesh",level=4)
+library(geodata)
+shp <- gadm(country="BGD", level=4, path=root)
 plot(shp)
 ```
 
@@ -50,13 +50,11 @@ Extract spatial salinity metrics by aggregating salinity in a given year in each
 
 ```{r s1, warning=FALSE, message=FALSE}
 filename <- paste0(root,"Salinity/Bangladesh_spatial_temporal_salinity.csv")
-
+library(terra)
 if(!file.exists(filename)){
   files <- list.files(paste0(root,"Salinity/"),pattern = (".tif$"), recursive = TRUE, full.names = TRUE)
   knitr::kable(head(files), caption = 'Salinity raster files')
-  library(terra)
-  shp <- vect(shp)
-  df <- data.frame(Name4=shp$NAME_4)
+  df <- data.frame(NAME_4=shp$NAME_4)
   for(i in 1:length(files)){
     temp <- extract(rast(files[i]), shp, fun=mean, na.rm=TRUE, ID=F)
     df <- cbind(df, temp)
@@ -69,7 +67,23 @@ if(!file.exists(filename)){
 ```
 
 
-## CHIRPS DONWLOAD
+## CHIRPS DOWNLOAD
+
+```{r, c1, warning=FALSE, message=FALSE}
+library(chirps)
+dates <- c("2013-5-16","2013-5-20")
+#lonlat <- data.frame(lon = c(shp@bbox[1,1],shp@bbox[1,2]), #lat = c(shp@bbox[2,1], shp@bbox[2,2]))
+data <- get_chirps(shp, dates, server = "CHC", as.raster = TRUE)
+data
+
+```
+
+### Spatially aggregated rainfall
+
+```{r c2, }
+dff <- extract(data[["chirps-v2.0.2013.05.16"]], shp, fun =mean, na.rm=T, bind=T)
+ write.csv(dff, paste0(root,"Chirps/Bangladesh_chirps_rainfall.csv"))
+```
 
 
 ## References
