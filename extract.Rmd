@@ -17,7 +17,7 @@ opts_knit$set(global.par = TRUE)
 Download salinity data available from [Hassani et al. (2020)](https://doi.org/10.6084/m9.figshare.13295918.v1).
 
 ```{r d1}
-root <- "D:/Data/HERplus/"
+root <- "D:/OneDrive - CGIAR/Data/HERplus"
 options(timeout=36000)
 getSalinity <- function(url, path){
   temp <- tempfile()
